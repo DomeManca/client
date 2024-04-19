@@ -183,7 +183,12 @@
     }
 
     function deleteData() {
-        var id = document.getElementById("id").value;
+    var id = document.getElementById("id").value;
+
+    // Chiede la conferma all'utente
+    var confirmed = confirm("Sei sicuro di voler eliminare questo elemento?");
+
+    if (confirmed) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (this.readyState == 4) {
@@ -194,7 +199,12 @@
         xhr.open("DELETE", "http://localhost/server/" + id, true);
         xhr.send();
         clearInputs();
+    } else {
+        // Se l'utente non conferma, non fare nulla
+        return;
     }
+}
+
 
     function clearInputs() {
         document.getElementById("id").value = "";
