@@ -129,6 +129,10 @@
             if (this.readyState == 4 && this.status == 200) {
                 document.getElementById("response").innerHTML = formatResponse(this.responseText);
             }
+            else{
+                var statusText = translateHTTPCode(this.status);
+                document.getElementById("response").innerHTML = statusText;
+            }
         };
         xhr.open("GET", "http://localhost/server/" + id, true);
         xhr.send();
@@ -146,7 +150,8 @@
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (this.readyState == 4) {
-                document.getElementById("response").innerHTML = formatResponse(this.responseText);
+                var statusText = translateHTTPCode(this.status);
+                document.getElementById("response").innerHTML = statusText;
             }
         };
         xhr.open("POST", "http://localhost/server/", true);
@@ -167,7 +172,8 @@
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (this.readyState == 4) {
-                document.getElementById("response").innerHTML = formatResponse(this.responseText);
+                var statusText = translateHTTPCode(this.status);
+                document.getElementById("response").innerHTML = statusText;
             }
         };
         xhr.open("PUT", "http://localhost/server/" + id, true);
@@ -181,7 +187,8 @@
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (this.readyState == 4) {
-                document.getElementById("response").innerHTML = formatResponse(this.responseText);
+                var statusText = translateHTTPCode(this.status);
+                document.getElementById("response").innerHTML = statusText;
             }
         };
         xhr.open("DELETE", "http://localhost/server/" + id, true);
@@ -199,38 +206,49 @@
     }
 
     function formatResponse(response) {
-    try {
-        var data = JSON.parse(response);
-        if (Array.isArray(data) && data.length > 0) {
-            var table = "<table><thead><tr>";
-            for (var key in data[0]) {
-                table += "<th>" + key + "</th>";
-            }
-            table += "</tr></thead><tbody>";
-            data.forEach(function(item) {
-                table += "<tr>";
-                for (var key in item) {
-                    table += "<td>" + item[key] + "</td>";
+        try {
+            var data = JSON.parse(response);
+            if (Array.isArray(data) && data.length > 0) {
+                var table = "<table><thead><tr>";
+                for (var key in data[0]) {
+                    table += "<th>" + key + "</th>";
                 }
-                table += "</tr>";
-            });
-            table += "</tbody></table>";
-            return table;
-        } else if (typeof data === 'object' && data !== null) {
-            var table = "<table><tbody>";
-            for (var key in data) {
-                table += "<tr><th>" + key + "</th><td>" + data[key] + "</td></tr>";
+                table += "</tr></thead><tbody>";
+                data.forEach(function(item) {
+                    table += "<tr>";
+                    for (var key in item) {
+                        table += "<td>" + item[key] + "</td>";
+                    }
+                    table += "</tr>";
+                });
+                table += "</tbody></table>";
+                return table;
+            } else if (typeof data === 'object' && data !== null) {
+                var table = "<table><tbody>";
+                for (var key in data) {
+                    table += "<tr><th>" + key + "</th><td>" + data[key] + "</td></tr>";
+                }
+                table += "</tbody></table>";
+                return table;
+            } else {
+                return JSON.stringify(data, null, 2);
             }
-            table += "</tbody></table>";
-            return table;
-        } else {
-            return JSON.stringify(data, null, 2);
+        } catch (error) {
+            return response;
         }
-    } catch (error) {
-        return response;
     }
-}
 
+    function translateHTTPCode(code) {
+        var translations = {
+            200: "Successo",
+            201: "Creato",
+            400: "Richiesta non valida",
+            404: "Non trovato",
+            405: "Metodo non consentito",
+            500: "Errore del server interno",
+        };
+        return translations[code] || code;
+    }
 </script>
 
 </body>
