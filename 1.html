@@ -107,6 +107,7 @@
             <button onclick="addData()">POST</button>
             <button onclick="updateData()">PUT</button>
             <button onclick="deleteData()">DELETE</button>
+            <button onclick="optionsData()">OPTIONS</button> <!-- Aggiunto pulsante OPTIONS -->
         </div>
     </div>
 
@@ -205,6 +206,22 @@
     }
 }
 
+    // Funzione per eseguire una richiesta OPTIONS
+function optionsData() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            var statusText = translateHTTPCode(this.status);
+            var headers = xhr.getAllResponseHeaders(); // Ottieni tutti gli header della risposta
+            var headerLines = headers.split('\n').slice(0, 3).join('\n'); // Prendi solo le prime 3 righe degli header
+            document.getElementById("response").innerHTML = "<p>Status: " + statusText + "</p><p>Headers:</p><pre>" + headerLines + "</pre>";
+        }
+    };
+    xhr.open("OPTIONS", "http://localhost/server/", true);
+    xhr.send();
+}
+
+
 
     function clearInputs() {
         document.getElementById("id").value = "";
@@ -252,6 +269,7 @@
         var translations = {
             200: "Successo",
             201: "Creato",
+            204: "No Content",
             400: "Richiesta non valida",
             404: "Non trovato",
             405: "Metodo non consentito",
